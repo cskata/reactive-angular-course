@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Course } from '../model/course';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { CourseDialogComponent } from '../course-dialog/course-dialog.component';
 import { CoursesService } from '../services/courses.service';
 import { Category } from '../course/category.enum';
 
@@ -17,10 +15,15 @@ export class HomeComponent implements OnInit {
   beginnerCourses$: Observable<Course[]>;
   advancedCourses$: Observable<Course[]>;
 
-  constructor(private coursesService: CoursesService, private dialog: MatDialog) {
+  constructor(private coursesService: CoursesService) {
   }
 
   ngOnInit() {
+    this.loadAllCourses();
+  }
+
+  loadAllCourses() {
+    // Stateless observable service design pattern
     const courses$ = this.coursesService.loadAllCourses();
 
     this.beginnerCourses$ = this.filterCoursesByCategory(courses$, Category.Beginner);
@@ -32,19 +35,6 @@ export class HomeComponent implements OnInit {
       map(courses => courses.filter(course => course.category === category))
     );
   }
-
-  editCourse(course: Course) {
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '400px';
-
-    dialogConfig.data = course;
-
-    const dialogRef = this.dialog.open(CourseDialogComponent, dialogConfig);
-  }
-
 }
 
 
