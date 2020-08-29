@@ -12,7 +12,7 @@ export function getAllCourses(req: Request, res: Response) {
 
   setTimeout(() => {
 
-    res.status(200).json({payload: Object.values(COURSES)});
+    res.status(200).json({courses: Object.values(COURSES)});
 
   }, 200);
 }
@@ -24,7 +24,7 @@ export function getCourseById(req: Request, res: Response) {
 
   const courses: any = Object.values(COURSES);
 
-  const course = courses.find(course => course.id == courseId);
+  const course = courses.find(_course => _course.id === courseId);
 
   res.status(200).json(course);
 }
