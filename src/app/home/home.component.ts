@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CoursesService } from '../services/courses.service';
 import { Category } from '../course/category.enum';
+import { LoadingService } from '../loading/loading.service';
 
 
 @Component({
@@ -15,7 +16,8 @@ export class HomeComponent implements OnInit {
   beginnerCourses$: Observable<Course[]>;
   advancedCourses$: Observable<Course[]>;
 
-  constructor(private coursesService: CoursesService) {
+  constructor(private coursesService: CoursesService,
+              private loadingService: LoadingService) {
   }
 
   ngOnInit() {
@@ -26,8 +28,10 @@ export class HomeComponent implements OnInit {
     // Stateless observable service design pattern
     const courses$ = this.coursesService.loadAllCourses();
 
-    this.beginnerCourses$ = this.filterCoursesByCategory(courses$, Category.Beginner);
-    this.advancedCourses$ = this.filterCoursesByCategory(courses$, Category.Advanced);
+    const loadCourses$ = this.loadingService.showLoaderUntilCompleted(courses$);
+
+    this.beginnerCourses$ = this.filterCoursesByCategory(loadCourses$, Category.Beginner);
+    this.advancedCourses$ = this.filterCoursesByCategory(loadCourses$, Category.Advanced);
   }
 
   filterCoursesByCategory(courses$: Observable<Course[]>, category: Category) {
